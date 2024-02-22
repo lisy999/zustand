@@ -1,12 +1,12 @@
 import React from "react";
-import useStore from "@/store";
 import { Button, Space } from "antd";
+import { useCatStore } from "@/store/catStore";
 export default function Test1() {
   const {
     cats: { bigCats, smallCats },
     increaseBigCats,
     increaseSmallCats,
-  } = useStore();
+  } = useCatStore();
   return (
     <>
       <Space>
@@ -14,7 +14,7 @@ export default function Test1() {
           bigCats:
           {bigCats}
         </span>
-        <Button onClick={() => increaseBigCats()}>增加</Button>
+        <Button onClick={() => increaseBigCats(2)}>增加</Button>
       </Space>
 
       <Space>
