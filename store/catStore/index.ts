@@ -1,6 +1,6 @@
+import { createSelectors } from "@/utils/createSelectors";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-
 type TCatStoreState = {
   cats: {
     bigCats: number;
@@ -11,23 +11,25 @@ type TCatStoreState = {
   summary: () => void;
 };
 
-export const useCatStore = create<TCatStoreState>()(
-  immer((set, get) => ({
-    cats: {
-      bigCats: 0,
-      smallCats: 0,
-    },
-    increaseBigCats: (v) =>
-      set((state) => {
-        state.cats.bigCats += v;
-      }),
-    increaseSmallCats: () =>
-      set((state) => {
-        state.cats.smallCats += 1;
-      }),
-    summary: () => {
-      const total = get().cats.bigCats + get().cats.smallCats;
-      return `共${total}只猫`;
-    },
-  }))
+export const useCatStore = createSelectors(
+  create<TCatStoreState>()(
+    immer((set, get) => ({
+      cats: {
+        bigCats: 0,
+        smallCats: 0,
+      },
+      increaseBigCats: (v) =>
+        set((state) => {
+          state.cats.bigCats += v;
+        }),
+      increaseSmallCats: () =>
+        set((state) => {
+          state.cats.smallCats += 1;
+        }),
+      summary: () => {
+        const total = get().cats.bigCats + get().cats.smallCats;
+        return `共${total}只猫`;
+      },
+    }))
+  )
 );

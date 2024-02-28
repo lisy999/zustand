@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Space } from "antd";
 import { useCatStore } from "@/store/catStore";
-export default function Test1() {
+export default function BigCatsAndSmallCats() {
   const {
     cats: { bigCats, smallCats },
     increaseBigCats,
@@ -10,6 +10,7 @@ export default function Test1() {
   } = useCatStore();
   return (
     <>
+      <h1>大猫小猫</h1>
       <Space>
         <span>
           bigCats:
@@ -26,6 +27,7 @@ export default function Test1() {
         <Button onClick={() => increaseSmallCats()}>增加</Button>
       </Space>
       {summary()}
+      <>{Math.random()}</>
     </>
   );
 }
