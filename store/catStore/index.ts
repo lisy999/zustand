@@ -8,10 +8,11 @@ type TCatStoreState = {
   };
   increaseBigCats: (v: number) => void;
   increaseSmallCats: () => void;
+  summary: () => void;
 };
 
 export const useCatStore = create<TCatStoreState>()(
-  immer((set) => ({
+  immer((set, get) => ({
     cats: {
       bigCats: 0,
       smallCats: 0,
@@ -24,29 +25,9 @@ export const useCatStore = create<TCatStoreState>()(
       set((state) => {
         state.cats.smallCats += 1;
       }),
+    summary: () => {
+      const total = get().cats.bigCats + get().cats.smallCats;
+      return `共${total}只猫`;
+    },
   }))
 );
-
-// const useCatStore = (set: StoreApi<TCatStoreState>["setState"]) => ({
-//   cats: {
-//     bigCats: 0,
-//     smallCats: 0,
-//   },
-
-//   increaseBigCats: () =>
-//     set((state) => ({
-//       cats: {
-//         ...state.cats,
-//         bigCats: state.cats.bigCats + 1,
-//       },
-//     })),
-//   increaseSmallCats: () =>
-//     set((state) => ({
-//       cats: {
-//         ...state.cats,
-//         smallCats: state.cats.smallCats + 1,
-//       },
-//     })),
-// });
-
-// export default useCatStore;

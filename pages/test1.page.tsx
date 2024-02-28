@@ -6,6 +6,7 @@ export default function Test1() {
     cats: { bigCats, smallCats },
     increaseBigCats,
     increaseSmallCats,
+    summary,
   } = useCatStore();
   return (
     <>
@@ -24,6 +25,7 @@ export default function Test1() {
         </span>
         <Button onClick={() => increaseSmallCats()}>增加</Button>
       </Space>
+      {summary()}
     </>
   );
 }
