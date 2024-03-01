@@ -1,5 +1,7 @@
 import { createSelectors } from "@/utils/createSelectors";
-import { create } from "zustand";
+// import { create } from "zustand";
+import { createWithEqualityFn } from "zustand/traditional";
+
 import { immer } from "zustand/middleware/immer";
 type TCatStoreState = {
   cats: {
@@ -12,7 +14,7 @@ type TCatStoreState = {
 };
 
 export const useCatStore = createSelectors(
-  create<TCatStoreState>()(
+  createWithEqualityFn<TCatStoreState>()(
     immer((set, get) => ({
       cats: {
         bigCats: 0,
