@@ -13,7 +13,7 @@ type TCatStoreState = {
   testCat2: number;
   increaseBigCats: (v: number) => void;
   increaseSmallCats: () => void;
-  summary: () => void;
+  summary: () => string;
   //重置
   reset: () => void;
 };

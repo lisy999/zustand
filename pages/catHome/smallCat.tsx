@@ -1,6 +1,6 @@
 import React from "react";
 import { useCatStore } from "@/store/catStore";
-import { Button } from "antd";
+import { Button, Card, Space } from "antd";
 import { shallow } from "zustand/shallow";
 export default function SmallCat() {
   //使用选择器 不渲染其他东西
@@ -19,18 +19,21 @@ export default function SmallCat() {
     shallow
   );
   return (
-    <>
-      <h1>小猫</h1>
-      <Button onClick={() => increaseBigCats(2)}>增加大猫</Button>
-      <Button
-        onClick={() => {
-          reset();
-          clearStorage();
-        }}
-      >
-        清除catStore本地存储
-      </Button>
+    <Card className="text-2xl">
+      <h1 style={{ color: "red" }}>小猫</h1>
+      <Space>
+        <Button onClick={() => increaseBigCats(2)}>增加大猫</Button>
+        <Button
+          onClick={() => {
+            reset();
+            clearStorage();
+          }}
+        >
+          清除catStore本地存储
+        </Button>
+      </Space>
+
       {Math.random()}
-    </>
+    </Card>
   );
 }

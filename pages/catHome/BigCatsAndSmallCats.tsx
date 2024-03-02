@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Space } from "antd";
+import { Button, Card, Space } from "antd";
 import { useCatStore } from "@/store/catStore";
 export default function BigCatsAndSmallCats() {
   const {
@@ -9,8 +9,8 @@ export default function BigCatsAndSmallCats() {
     summary,
   } = useCatStore();
   return (
-    <>
-      <h1>大猫小猫</h1>
+    <Card className="text-2xl">
+      <h1 style={{ color: "red" }}>大猫小猫</h1>
       <Space>
         <span>
           bigCats:
@@ -18,7 +18,6 @@ export default function BigCatsAndSmallCats() {
         </span>
         <Button onClick={() => increaseBigCats(2)}>增加</Button>
       </Space>
-
       <Space>
         <span>
           smallCats:
@@ -28,6 +27,6 @@ export default function BigCatsAndSmallCats() {
       </Space>
       {summary()}
       <>{Math.random()}</>
-    </>
+    </Card>
   );
 }

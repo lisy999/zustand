@@ -9,7 +9,7 @@ const SmallCat = dynamic(import("./smallCat"), {
 });
 export default function CatHome() {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <BigCatsAndSmallCats />
       <SmallCat />
     </div>
