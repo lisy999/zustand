@@ -12,15 +12,24 @@ export default function SmallCat() {
   //   }),
   //   shallow
   // );
-
-  const [increaseBigCats] = useCatStore(
-    (state) => [state.increaseBigCats],
+  //清空本地存储
+  const { clearStorage } = useCatStore.persist;
+  const [increaseBigCats, reset] = useCatStore(
+    (state) => [state.increaseBigCats, state.reset],
     shallow
   );
   return (
     <>
       <h1>小猫</h1>
       <Button onClick={() => increaseBigCats(2)}>增加大猫</Button>
+      <Button
+        onClick={() => {
+          reset();
+          clearStorage();
+        }}
+      >
+        清除catStore本地存储
+      </Button>
       {Math.random()}
     </>
   );
