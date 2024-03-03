@@ -1,4 +1,4 @@
-@tailwind base;
+/* @tailwind base;  此段引入目前已知bug是 antDesign Button的primary样式消失 */
 @tailwind components;
 @tailwind utilities;
 

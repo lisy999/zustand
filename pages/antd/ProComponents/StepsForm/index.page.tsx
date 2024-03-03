@@ -7,6 +7,7 @@ import {
   ProFormText,
   StepsForm,
 } from "@ant-design/pro-components";
+import { Button } from "antd";
 
 const Table = dynamic(() => import("antd").then((antd) => antd.Table), {
   ssr: false,
@@ -105,7 +106,7 @@ const EditExample = () => {
             { data: 11 },
             { data: 12 },
           ]}
-        ></Table>
+        />
       </StepsForm.StepForm>
       <StepsForm.StepForm name="step2" title={"同步表单信息"}>
         <ProFormDateRangePicker
