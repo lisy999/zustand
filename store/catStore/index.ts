@@ -5,6 +5,7 @@ import { createWithEqualityFn } from "zustand/traditional";
 import { immer } from "zustand/middleware/immer";
 import { createJSONStorage, persist } from "zustand/middleware";
 type TCatStoreState = {
+  fish: number;
   cats: {
     bigCats: number;
     smallCats: number;
@@ -25,6 +26,7 @@ export const useCatStore = createSelectors(
       //persist:持久中间件 本地存储
       persist(
         (set, get) => ({
+          fish: 0,
           cats: {
             bigCats: 0,
             smallCats: 0,
