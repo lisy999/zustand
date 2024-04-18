@@ -11,6 +11,8 @@
   "dependencies": {
     "@ant-design/pro-components": "2.6.49",
     "antd": "^5.14.1",
+    "axios": "1.6.8",
+    "echarts-for-react": "3.0.2",
     "immer": "10.0.3",
     "next": "14.1.0",
     "react": "^18",
