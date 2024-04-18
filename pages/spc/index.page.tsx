@@ -2,15 +2,32 @@ import React, { useEffect, useState } from "react";
 import EchartsForReact from "echarts-for-react";
 
 import axios from "axios";
-import { Button, Col, Form, Row, InputNumber } from "antd";
+import { Button, Col, Form, Row, InputNumber, Input } from "antd";
+type optionType = {
+  x_bar_avg: number;
+  x_bar_upper_limit: number;
+  x_bar_lower_limit: number;
+  R: number[];
+  x: number[];
+  x_bar: number[];
+  R_upper_limit: number;
+  R_avg: number;
+};
+const initialValue = {
+  x_bar_avg: 0,
+  x_bar_upper_limit: 0,
+  x_bar_lower_limit: 0,
+  R: [],
+  x: [],
+  x_bar: [],
+  R_upper_limit: 0,
+  R_avg: 0,
+};
 export default function Spc() {
   const [form] = Form.useForm();
-  const [optionData, setOptionData] = useState<{
-    x_bar_avg: number;
-    x_bar_upper_limit: number;
-    x_bar_lower_limit: number;
-    R: number[];
-  }>({ x_bar_avg: 0, x_bar_upper_limit: 0, x_bar_lower_limit: 0, R: [] });
+  const [form2] = Form.useForm();
+  const [optionData, setOptionData] = useState<optionType>(initialValue);
+  const [optionData2, setOptionData2] = useState<optionType>(initialValue);
   // 假设你从接口获取了以下数据
   // const optionData = {
   //   x_bar_avg: 0.5431507874496485,
@@ -88,27 +105,29 @@ export default function Spc() {
   // ];
 
   // 将 markLineData 添加到 series 中
-  const option = {
+  const option = (v: optionType) => ({
     tooltip: {
       trigger: "item",
     },
     xAxis: {
       type: "category",
-      data: [1, 2, 3, 4, 5],
+      data: v.x,
     },
     yAxis: {
+      max: v.x_bar_upper_limit ? v.x_bar_upper_limit + 0.5 : 0,
+      min: v.x_bar_lower_limit ? v.x_bar_lower_limit - 0.5 : 0,
       type: "value",
     },
     series: [
       {
         name: "",
-        data: optionData.R,
+        data: v.x_bar,
         type: "line",
         markLine: {
           data: [
             {
               name: "avg",
-              yAxis: optionData.x_bar_avg ? optionData.x_bar_avg : 0,
+              yAxis: v.x_bar_avg ? v.x_bar_avg : 0,
               lineStyle: {
                 color: "red",
                 width: 2,
@@ -119,9 +138,7 @@ export default function Spc() {
             },
             {
               name: "ucl",
-              yAxis: optionData.x_bar_upper_limit
-                ? optionData.x_bar_upper_limit
-                : 0,
+              yAxis: v.x_bar_upper_limit ? v.x_bar_upper_limit : 0,
               lineStyle: {
                 color: "green",
                 width: 2,
@@ -132,9 +149,7 @@ export default function Spc() {
             },
             {
               name: "lcl",
-              yAxis: optionData.x_bar_lower_limit
-                ? optionData.x_bar_lower_limit
-                : 0,
+              yAxis: v.x_bar_lower_limit ? v.x_bar_lower_limit : 0,
               lineStyle: {
                 color: "blue",
                 width: 2,
@@ -147,55 +162,136 @@ export default function Spc() {
         },
       },
     ],
-  };
+  });
+  const option2 = (v: optionType) => ({
+    tooltip: {
+      trigger: "item",
+    },
+    xAxis: {
+      type: "category",
+      data: v.x,
+    },
+    yAxis: {
+      max: v.R_upper_limit ? v.R_upper_limit + 0.5 : 0,
+
+      type: "value",
+    },
+    series: [
+      {
+        name: "",
+        data: v.R,
+        type: "line",
+        markLine: {
+          data: [
+            {
+              name: "avg",
+              yAxis: v.R_avg ? v.R_avg : 0,
+              lineStyle: {
+                color: "red",
+                width: 2,
+              },
+              label: {
+                formatter: "avg",
+              },
+            },
+            {
+              name: "ucl",
+              yAxis: v.R_upper_limit ? v.R_upper_limit : 0,
+              lineStyle: {
+                color: "green",
+                width: 2,
+              },
+              label: {
+                formatter: "ucl",
+              },
+            },
+            {
+              name: "lcl",
+              yAxis: 0,
+              lineStyle: {
+                color: "blue",
+                width: 2,
+              },
+              label: {
+                formatter: "lcl",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  });
+
   const formData = [
     { dataIndex: "row", title: "数据行数" },
     { dataIndex: "cols", title: "数据列数" },
-    { dataIndex: "A2", title: "A2常数值" },
-    { dataIndex: "D4", title: "D4常数值" },
+    { dataIndex: "constantA2", title: "A2常数值" },
+    { dataIndex: "constantD4", title: "D4常数值" },
     { dataIndex: "min", title: "数据最小值" },
     { dataIndex: "max", title: "数据最大值" },
   ];
+  const formData2 = [
+    { dataIndex: "row", title: "数据行数" },
+    { dataIndex: "cols", title: "数据列数" },
+    { dataIndex: "constantA2", title: "A2常数值" },
+    { dataIndex: "constantD4", title: "D4常数值" },
+    { dataIndex: "min", title: "数据最小值" },
+    { dataIndex: "max", title: "数据最大值" },
+  ];
+  function splitArrayIntoChunks(array: string[], chunkSize: number) {
+    const result = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      result.push(array.slice(i, i + chunkSize));
+    }
+    return result;
+  }
+
+  const getData2 = (data?: any) => {
+    let params = {};
+    if (data) {
+      params = { ...form2.getFieldsValue(), data };
+      axios
+        .post("http://192.168.111.97:8080/demo", {
+          ...params,
+        })
+        .then((res2: any) => {
+          setOptionData2(res2.data);
+          const oneDimensionalArray = [].concat(...res2.data.data);
+          form2.setFieldsValue({ data: oneDimensionalArray });
+        });
+    } else {
+      params = { ...form2.getFieldsValue() };
+      const originalArray = form2.getFieldsValue().data;
+      const chunkSize = 5;
+      const resultArray = splitArrayIntoChunks(originalArray, chunkSize);
+      form2.validateFields().then(() => {
+        axios
+          .post("http://192.168.111.97:8080/demo", {
+            ...params,
+            data: resultArray,
+          })
+          .then((res2) => {
+            setOptionData2(res2.data);
+            console.log(res2, "rrrrr22222");
+          });
+      });
+    }
+  };
   const getData = () => {
-    axios
+    return axios
       .get("http://192.168.111.97:8080/randomdemo", {
         params: { ...form.getFieldsValue() },
       })
       .then((res) => {
         setOptionData(res.data);
-        console.log(res, "rrrrr");
-        axios
-          .get("http://192.168.111.97:8080/demo", {
-            params: {
-              data: [
-                [
-                  0.6547177538980067, 0.902309799505638, 0.03305632229209532,
-                  0.39843626130045506, 0.7707952264405944,
-                ],
-                [
-                  0.4392232196476322, 0.4974236213929032, 0.6660721844764713,
-                  0.30861995949303933, 0.500960760174903,
-                ],
-                [
-                  0.5143792566946238, 0.23969478267515665, 0.2241223639647819,
-                  0.5456937990619026, 0.9472064458458623,
-                ],
-                [
-                  0.33188200192841777, 0.5880959741134006, 0.2568468102477688,
-                  0.058444735449726726, 0.6321096203190837,
-                ],
-              ],
-              ...form.getFieldsValue(),
-            },
-          })
-          .then((res2) => {
-            // setOptionData(res.data);
-            console.log(res2, "rrrrr22222");
-          });
+        return res.data.data;
       });
   };
+
   useEffect(() => {
-    getData();
+    getData().then((res) => {
+      getData2(res);
+    });
   }, []);
   return (
     <div>
@@ -209,9 +305,13 @@ export default function Spc() {
               </Form.Item>
             </Col>
           ))}
-          <Button type="primary" onClick={() => getData()}>
-            查询
-          </Button>
+          <Col>
+            <Button type="primary" onClick={() => getData()}>
+              查询
+            </Button>
+          </Col>
+
+          <Button onClick={() => form.resetFields()}>重置</Button>
         </Row>
       </Form>
       <EchartsForReact
@@ -219,7 +319,84 @@ export default function Spc() {
           width: "100%",
           height: 400,
         }}
-        option={option}
+        option={option(optionData)}
+      />
+      <Form
+        form={form2}
+        initialValues={{ constantA2: 0.577, constantD4: 2.144 }}
+      >
+        <Row gutter={10}>
+          {formData2.map((item, index) => (
+            <Col span={3} key={index}>
+              <Form.Item label={item.title} name={item.dataIndex}>
+                <InputNumber style={{ width: 150 }} />
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
+
+        <Row>
+          <Form.List
+            name="data"
+            initialValue={Array.from({ length: 25 })}
+            rules={[
+              {
+                validator: async (_, names) => {
+                  if (!names || names.length < 2) {
+                    return Promise.reject(new Error("At least 2 passengers"));
+                  }
+                },
+              },
+            ]}
+          >
+            {(fields) => (
+              <>
+                {fields.map((field, index) => (
+                  <Form.Item
+                    // {...(index === 0
+                    //   ? formItemLayout
+                    //   : formItemLayoutWithOutLabel)}
+                    label={index === 0 ? "二维数组" : ""}
+                    required={false}
+                    key={field.key}
+                  >
+                    <Form.Item
+                      {...field}
+                      // validateTrigger={["onChange", "onBlur"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "请输入",
+                          // whitespace: true,
+                        },
+                      ]}
+                      noStyle
+                    >
+                      <InputNumber style={{ width: "90%" }} />
+                    </Form.Item>
+                  </Form.Item>
+                ))}
+              </>
+            )}
+          </Form.List>
+
+          <Col>
+            <Button type="primary" onClick={() => getData2()}>
+              查询
+            </Button>
+          </Col>
+
+          <Form.Item>
+            <Button onClick={() => form2.resetFields()}>重置</Button>
+          </Form.Item>
+        </Row>
+      </Form>
+      <EchartsForReact
+        style={{
+          width: "100%",
+          height: 400,
+        }}
+        option={option2(optionData2)}
       />
     </div>
   );
